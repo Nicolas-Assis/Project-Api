@@ -1,0 +1,17 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: nicks
+      POSTGRES_PASSWORD: nicks
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5433:5432" # Ensure this matches the port in your app.module.ts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

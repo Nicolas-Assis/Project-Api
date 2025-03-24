@@ -1,0 +1,8 @@
+.nicolas{
+    border-radius: 50%; /* Mantém a imagem circular */
+    width: 150px; /* Reduz o tamanho da largura */
+    height: 150px; /* Reduz o tamanho da altura */
+    margin: 10px; 
+    right:  10px;/* Adiciona espaço ao redor da imagem */
+     /* Mantém a imagem no canto inferior direito */
+}

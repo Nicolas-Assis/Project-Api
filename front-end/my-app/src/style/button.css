@@ -1,0 +1,14 @@
+.my-button {
+    background-color: #6ab04c; /* Verde */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.my-button:hover {
+    background-color: #45a049; /* Verde mais escuro */
+}
