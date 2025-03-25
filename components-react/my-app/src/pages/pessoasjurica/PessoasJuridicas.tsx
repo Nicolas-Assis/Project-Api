@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import api from '../../service/api';
-import styles from '../../style/PessoasJuridicas.module.css'; // Importação correta do CSS
+import styles from '../../style/PessoasJuridicas.module.css';
+import Header from '../../components/PessoaJuridica/header/Header';
+import FormPessoaJuridica from '../../components/PessoaJuridica/form/Form';
+import TabelaPessoasJuridicas from '../../components/PessoaJuridica/table/Table';
 
 export default function PessoasJuridicas() {
   interface PessoaJuridica {
@@ -15,14 +18,24 @@ export default function PessoasJuridicas() {
   }
 
   const [pessoasJuridicas, setPessoasJuridicas] = useState<PessoaJuridica[]>([]);
+  const [novaPessoaJuridica, setNovaPessoaJuridica] = useState<PessoaJuridica>({
+    cnpj: '',
+    razaoSocial: '',
+    email: '',
+    telefone: '',
+    endereco: '',
+    cidade: '',
+    pais: '',
+    codigoPostal: '',
+  });
+
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
 
   useEffect(() => {
     async function fetchPessoasJuridicas() {
       try {
-        console.log('Fazendo requisição para a API...');
-        const response = await api.get('/pessoas-juridicas/pessoas-juridicas'); // Endpoint correto
-        console.log('Resposta da API:', response.data);
-        setPessoasJuridicas(response.data); // Atualiza o estado com os dados recebidos
+        const response = await api.get('/pessoas-juridicas/pessoas-juridicas');
+        setPessoasJuridicas(response.data);
       } catch (error) {
         console.error('Erro ao buscar pessoas jurídicas:', error);
       }
@@ -31,37 +44,41 @@ export default function PessoasJuridicas() {
     fetchPessoasJuridicas();
   }, []);
 
+  async function criarPessoaJuridica(event: React.FormEvent) {
+    event.preventDefault();
+    try {
+      const response = await api.post('/pessoas-juridicas/pessoas-juridicas', novaPessoaJuridica);
+      setPessoasJuridicas([...pessoasJuridicas, response.data]);
+      setNovaPessoaJuridica({
+        cnpj: '',
+        razaoSocial: '',
+        email: '',
+        telefone: '',
+        endereco: '',
+        cidade: '',
+        pais: '',
+        codigoPostal: '',
+      });
+      setMostrarFormulario(false);
+    } catch (error) {
+      console.error('Erro ao cadastrar pessoa jurídica:', error);
+    }
+  }
+
   return (
-    <div>
-      <h1>Pessoas Jurídicas</h1>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>CNPJ</th>
-            <th>Razão Social</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Endereço</th>
-            <th>Cidade</th>
-            <th>País</th>
-            <th>Código Postal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pessoasJuridicas.map((pj: PessoaJuridica) => (
-            <tr key={pj.cnpj}>
-              <td>{pj.cnpj}</td>
-              <td>{pj.razaoSocial}</td>
-              <td>{pj.email}</td>
-              <td>{pj.telefone}</td>
-              <td>{pj.endereco}</td>
-              <td>{pj.cidade}</td>
-              <td>{pj.pais}</td>
-              <td>{pj.codigoPostal}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className={styles.container}>
+      <Header
+        mostrarFormulario={mostrarFormulario}
+        toggleFormulario={() => setMostrarFormulario(!mostrarFormulario)}
+      />
+      {mostrarFormulario && (
+        <FormPessoaJuridica
+          novaPessoaJuridica={novaPessoaJuridica}
+          setNovaPessoaJuridica={setNovaPessoaJuridica}
+          criarPessoaJuridica={criarPessoaJuridica}
+        />
+      )}
+      <TabelaPessoasJuridicas pessoasJuridicas={pessoasJuridicas} />
     </div>
   );
 }
